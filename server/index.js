@@ -3,7 +3,13 @@ const bodyParser = require('body-parser');
 const axios = require('axios');
 const API_KEY = require('./config.js').API_KEY;
 const app = express();
-const port = 3000;
+const port = 80;
+
+var https = require('https');
+var http = require('http');
+
+https.globalAgent.maxSockets = 256;
+http.globalAgent.maxSockets = 256;
 
 const path = require('path');
 app.use(bodyParser.json());

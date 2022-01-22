@@ -1,7 +1,7 @@
 const express = require('express');
 const bodyParser = require('body-parser');
 const axios = require('axios');
-const API_KEY = require('./config.js').API_KEY;
+const { API_KEY, PRODUCTS, RATINGS_AND_REVIEWS, QUESTIONS_AND_ANSWERS } = require('./config.js');
 const app = express();
 const port = 80;
 
@@ -11,6 +11,11 @@ var http = require('http');
 https.globalAgent.maxSockets = 256;
 http.globalAgent.maxSockets = 256;
 
+const fallback = `https://app-hrsei-api.herokuapp.com/api/fec2/hr-nyc`;
+const products = PRODUCTS || fallback;
+const ratingsAndReviews = RATINGS_AND_REVIEWS || fallback;
+const questionsAndAnswers = QUESTIONS_AND_ANSWERS || fallback;
+
 const path = require('path');
 app.use(bodyParser.json());
 app.use('/', express.static(path.join(__dirname, '../../atelier-front-end/dist')));
@@ -18,10 +23,10 @@ app.use('/', express.static(path.join(__dirname, '../../atelier-front-end/dist')
 app.all('/products*', (req, res) => {
   axios({
     method: req.method,
-    url: `https://app-hrsei-api.herokuapp.com/api/fec2/hr-nyc${req.path}`,
-    headers: {Authorization: API_KEY},
+    url: `${products}${req.path}`,
+    headers: { Authorization: API_KEY },
     params: req.query,
-    data: req.body
+    data: req.body,
   })
     .then((serviceResponse) => {
       res.json(serviceResponse.data);
@@ -38,10 +43,10 @@ app.all('/products*', (req, res) => {
 app.all('/reviews*', (req, res) => {
   axios({
     method: req.method,
-    url: `http://localhost:3003${req.path}`,
-    headers: {Authorization: API_KEY},
+    url: `${ratingsAndReviews}${req.path}`,
+    headers: { Authorization: API_KEY },
     params: req.query,
-    data: req.body
+    data: req.body,
   })
     .then((serviceResponse) => {
       res.status(serviceResponse.status).json(serviceResponse.data);
@@ -58,10 +63,10 @@ app.all('/reviews*', (req, res) => {
 app.all('/qa*', (req, res) => {
   axios({
     method: req.method,
-    url: `https://app-hrsei-api.herokuapp.com/api/fec2/hr-nyc${req.path}`,
-    headers: {Authorization: API_KEY},
+    url: `${questionsAndAnswers}${req.path}`,
+    headers: { Authorization: API_KEY },
     params: req.query,
-    data: req.body
+    data: req.body,
   })
     .then((serviceResponse) => {
       res.json(serviceResponse.data);
